@@ -1,25 +1,119 @@
-etherpad-docker
+DOCKER ETHERPAD
 ===============
 
-This is a Docker image which is nothing more than the basic test Etherpad setup as described on https://github.com/ether/etherpad-lite.
-(All of these instructions are as root.) To download the image from the Docker index, run:
+# Introduction
+This is a Docker image which is nothing more than the basic test Etherpad setup
+as described on https://github.com/ether/etherpad-lite.
 
-`docker pull leibnitius/etherpad-docker`
+# Quick start
+To download the image from the Docker index, run:
 
-To run Etherpad on port 9001, run:
+```bash
+docker pull moss/docker-etherpad
+```
 
-`docker run -d -p 9001:9001 leibnitius/etherpad-docker`
+First, initialize a mysql container:
+
+```bash
+docker run -d -e MYSQL_PASSWORD=password -e MYSQL_DATABASE=etherpad \
+    -e MYSQL_USER=etherpaduser -e MYSQL_PASSWORD=password \
+    -e MYSQL_ROOT_PASSWORD=mysecret --name ep_mysql mysql
+```
+
+Then, to run Etherpad on port 9001, run:
+
+```bash
+docker run -d --name=ep_moss --link=ep_mysql:mysql -p 9001:9001 \
+    moss/etherpad
+```
 
 To run Etherpad on port 80, run:
 
-`docker run -d -p 80:9001 leibnitius/etherpad-docker`
+```bash
+docker run -d --name=ep_moss --link=ep_mysql:mysql -p 80:9001 moss/etherpad
+```
 
-To edit the Etherpad settings.json, it is necessary to clone the Git repository:
+# Customize with Environment Variables
 
-`git clone git://github.com/ether/etherpad-docker.git && cd etherpad-docker`
+To edit the Etherpad settings, you can use some environment variables.
 
-Then edit the settings.json to your liking and run:
+`EP_TITLE`
 
-`docker build -t <YOUR_USERNAME>/etherpad-docker .`
+String for your etherpad title (Default: Etherpad)
 
-This image could also be used as a base for Docker Etherpad images integrated with MySQL, etc.
+`EP_PORT`
+
+Port to run your etherpad service **INSIDE THE CONTAINER** (Default: 9001)
+
+`ADMIN_PASS`
+
+Password for your admin user (Default: admin)
+
+`FAVICON_URL`
+
+Favicon url to show in your etherpad (Default: ./favicon.ico)
+
+# Volume
+
+To persiste with `settings.json` and `etherpad.log` you can use the `/data`
+volume.
+
+### Example
+```bash
+docker run --rm --name=ep_moss --link=ep_mysql:mysql -v /srv/ether/:/data \
+    -e EP_TITLE="YOUR TITLE" -e ADMIN_PASS=password \
+    -e FAVICON_URL="http://www.google.com/s2/favicons?domain=www.google.com" \
+    -e EP_PORT=9002 -p 9001:9002 moss/etherpad
+```
+
+# External database
+For external database we have this environments variables:
+
+`DB_HOST`
+
+Host for your external database.
+
+`DB_PORT`
+
+Port for your external database.
+
+`DB_NAME`
+
+External database name.
+
+`DB_USER`
+
+External database user.
+
+`DB_PASS`
+
+External database password.
+
+
+# Abiword enable
+
+To use advanced import/export install abiword. For it, create a `Dockerfile`
+with:
+
+```bash
+FROM moss/etherpad
+
+RUN set -x; \
+    apt-get update \
+    && apt-get install -y --no-install-recommends \
+    abiword \
+    && rm -rf /var/lib/apt/lists/*
+```
+
+Execute a new build:
+
+```bash
+docker build -t <YOUR NAME>/etherpad .
+```
+
+And use `ABIWORD=true` on your run.
+
+
+```bash
+docker run --rm --name=moss_ether --link=ep_mysql:mysql -v /srv/ether/:/data -e EP_TITLE="YOUR TITLE" -e ADMIN_PASS=password -e FAVICON_URL="http://www.google.com/s2/favicons?domain=www.google.com" -e ABIWORD=true -p 9001:9001 <yourname>/etherpad
+```
