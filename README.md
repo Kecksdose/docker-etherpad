@@ -16,8 +16,8 @@ First, initialize a mysql container:
 
 ```bash
 docker run -d -e MYSQL_PASSWORD=password -e MYSQL_DATABASE=etherpad \
-    -e MYSQL_USER=etherpaduser -e MYSQL_PASSWORD=password \
-    -e MYSQL_ROOT_PASSWORD=mysecret --name ep_mysql mysql
+    -e MYSQL_USER=etherpaduser -e MYSQL_ROOT_PASSWORD=mysecret \
+    --name ep_mysql mysql
 ```
 
 Then, to run Etherpad on port 9001, run:
@@ -115,5 +115,8 @@ And use `ABIWORD=true` on your run.
 
 
 ```bash
-docker run --rm --name=moss_ether --link=ep_mysql:mysql -v /srv/ether/:/data -e EP_TITLE="YOUR TITLE" -e ADMIN_PASS=password -e FAVICON_URL="http://www.google.com/s2/favicons?domain=www.google.com" -e ABIWORD=true -p 9001:9001 <yourname>/etherpad
+docker run --rm --name=moss_ether --link=ep_mysql:mysql -v /srv/ether/:/data \
+    -e EP_TITLE="YOUR TITLE" -e ADMIN_PASS=password \
+    -e FAVICON_URL="http://www.google.com/s2/favicons?domain=www.google.com" \
+    -e ABIWORD=true -p 9001:9001 <yourname>/etherpad
 ```

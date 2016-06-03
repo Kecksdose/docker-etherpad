@@ -6,9 +6,9 @@
 # Distributed under terms of the GPLv2 license.
 #
 
-# RUN
+set -e
 
-set -x
+[[ -n $DEBUG_ENTRYPOINT ]] && set -x
 
 EP_TITLE=${EP_TITLE:-Etherpad}
 EP_PORT=${EP_PORT:-9001}
@@ -23,10 +23,12 @@ DB_PASS=${DB_PASS:-}
 ADMIN_PASS=${ADMIN_PASS:-admin}
 FAVICON_URL=${FAVICON_URL:-favicon.ico}
 ABIWORD=${ABIWORD:-false}
-if [ ! $ABIWORD  ]; then 
+ABIWORD_PATH=${ABIWORD_PATH:-null}
+PLUGINS=${PLUGINS:-false}
+if [ "${ABIWORD}" == 'false'  ]; then
     ABIWORD_PATH=null
 else
-    ABIWORD_PATH=/usr/bin/abiword
+    ABIWORD_PATH='"/usr/bin/abiword"'
 fi
 SETTINGS_FILE=/data/settings.json
 

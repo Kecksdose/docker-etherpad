@@ -11,14 +11,18 @@ FROM node:4.4
 MAINTAINER Thiago Almeida <thiagoalmeidasa@gmail.com>
 
 ENV ETHERPAD_VERSION 1.6.0
+ENV PLUGINS ep_adminpads ep_markdown
 
 # Get Etherpad-lite's other dependencies
-ADD source.list /etc/apt/sources.list
 RUN set -x; \
     apt-get update \
     && apt-get install -y --no-install-recommends \
     gzip git-core curl python libssl-dev pkg-config build-essential supervisor \
     && rm -rf /var/lib/apt/lists/*
+
+# Setting up the workdir
+
+WORKDIR /opt/etherpad/
 
 # Grab the especific Git version
 RUN cd /opt && git clone https://github.com/ether/etherpad-lite.git \
@@ -28,10 +32,8 @@ RUN cd /opt && git clone https://github.com/ether/etherpad-lite.git \
 RUN /opt/etherpad/bin/installDeps.sh
 
 # Install plugins
-RUN npm install \
-    ep_adminpads \
-    ep_markdown \
-    ep_better_pdf_export
+RUN npm --silent install \
+    $PLUGINS
 
 # Add conf files
 ADD supervisor.conf /etc/supervisor/supervisor.conf
@@ -40,7 +42,6 @@ RUN chmod 0755 /entrypoint.sh
 
 VOLUME ["/data"]
 
-WORKDIR /opt/etherpad/
 
 EXPOSE 9001
 ENTRYPOINT ["/entrypoint.sh"]
