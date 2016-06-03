@@ -59,8 +59,7 @@ To debug what is happening on start, set this true. (Default: false)
 
 # Volume
 
-To persiste with `settings.json` and `etherpad.log` you can use the `/data`
-volume.
+To persiste with `etherpad.log` you can use the `/data` volume.
 
 ### Example
 ```bash
