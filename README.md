@@ -53,6 +53,10 @@ Password for your admin user (Default: admin)
 
 Favicon url to show in your etherpad (Default: ./favicon.ico)
 
+`DEBUG_ENTRYPOINT`
+
+To debug what is happening on start, set this true. (Default: false)
+
 # Volume
 
 To persiste with `settings.json` and `etherpad.log` you can use the `/data`
