@@ -92,6 +92,23 @@ External database user.
 
 External database password.
 
+# Add plugins
+
+In order to keep the images smaller, we do not install many plugins.
+If you need any plugin, you can inherit the base image that you like, and write
+your own Dockerfile like this:
+
+```bash
+FROM moss/etherpad:1.6.0
+MAINTAINER Thiago Almeida <thiagoalmeidasa@gmail.com>
+
+ENV PLUGINS ep_webrtc
+
+RUN npm --silent install \
+        $PLUGINS
+
+```
+
 
 # Abiword enable
 

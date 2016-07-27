@@ -11,7 +11,7 @@ FROM node:4.4
 MAINTAINER Thiago Almeida <thiagoalmeidasa@gmail.com>
 
 ENV ETHERPAD_VERSION 1.6.0
-ENV PLUGINS ep_adminpads ep_markdown
+ENV PLUGINS ep_adminpads ep_markdown ep_webrtc
 
 # Get Etherpad-lite's other dependencies
 RUN set -x; \
