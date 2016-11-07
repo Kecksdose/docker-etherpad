@@ -1,0 +1,30 @@
+version: "2"
+services:
+  etherpad:
+    image: moss/etherpad:1.6.0-2
+    environment:
+      DEBUG_ENTRYPOINT: 'true'
+      EP_TITLE: Etherpad
+      ADMIN_PASS: admin
+      DB_NAME: etherpad
+      DB_USER: etherpaduser
+      DB_PASS: password
+      DB_HOST: mysql
+      DB_TYPE: mysql
+      FAVICON_URL: "https://example.domain.com/favicon.ico"
+      LDAP_ENABLED: 'true'
+      LDAP_SERVER: "ldap://openldap"
+      LDAP_BIND_DN: "cn=admin,dc=example,dc=domain,dc=com"
+      LDAP_BIND_PASSWORD: 'securepassword'
+      LDAP_SEARCH_BASE: "ou=people,dc=example,dc=domain,dc=com"
+      LDAP_FULL_NAME_PROPERTY: 'cn'
+      LDAP_GROUP_SEARCH_BASE: "ou=groups,dc=example,dc=domain,dc=com"
+      LDAP_GROUP_NAME: "admin"
+      ANONYMOUS_READONLY: 'false'
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: etherpad
+      MYSQL_USER: etherpaduser
+      MYSQL_ROOT_PASSWORD: mysecret
