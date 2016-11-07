@@ -1,11 +1,11 @@
-DOCKER ETHERPAD
+DOCKER ETHERPAD 1.6.0-2
 ===============
 
-# Introduction
+## Introduction
 This is a Docker image which is nothing more than the basic test Etherpad setup
 as described on https://github.com/ether/etherpad-lite.
 
-# Quick start
+## Quick start
 To download the image from the Docker index, run:
 
 ```bash
@@ -33,7 +33,7 @@ To run Etherpad on port 80, run:
 docker run -d --name=ep_moss --link=ep_mysql:mysql -p 80:9001 moss/etherpad
 ```
 
-# Customize with Environment Variables
+## Customize with Environment Variables
 
 To edit the Etherpad settings, you can use some environment variables.
 
@@ -57,11 +57,11 @@ Favicon url to show in your etherpad (Default: ./favicon.ico)
 
 To debug what is happening on start, set this true. (Default: false)
 
-# Volume
+## Volume
 
 To persiste with `etherpad.log` you can use the `/data` volume.
 
-### Example
+#### Example
 ```bash
 docker run --rm --name=ep_moss --link=ep_mysql:mysql -v /srv/ether/:/data \
     -e EP_TITLE="YOUR TITLE" -e ADMIN_PASS=password \
@@ -69,7 +69,7 @@ docker run --rm --name=ep_moss --link=ep_mysql:mysql -v /srv/ether/:/data \
     -e EP_PORT=9002 -p 9001:9002 moss/etherpad
 ```
 
-# External database
+## External database
 For external database we have this environments variables:
 
 `DB_HOST`
@@ -92,7 +92,58 @@ External database user.
 
 External database password.
 
-# Add plugins
+`DB_TYPE`
+
+Use `mysql` or `postgres`
+
+## Ldap login
+
+To use an openldap as a authentication server, you need to add
+variables:
+
+`LDAP_ENABLED`
+
+Change to True to enable ldap login (Default: false)
+
+`LDAP_SERVER`
+
+Ldap server address. ie. `ldap://ldap.domain` or `ldaps://ldap.domain`
+
+`LDAP_BIND_DN`
+
+Ldap bind user to execute the search.
+
+`LDAP_BIND_PASSWORD`
+
+Ldap bind password.
+
+`LDAP_SEARCH_BASE`
+
+Starting point within LDAP structure to search for login user.
+
+`LDAP_SEARCH_PROPERTY`
+
+Ldap property used for searching, ie. login username needs to match value in
+`uid` property in LDAP (Defaut: `uid`)
+
+`LDAP_NAME_PROPERTY`
+
+Ldap property used to show user name.
+
+`ANONYMOUS_READONLY`
+
+Authorize or not non authenticated users to read the pads. (Default: false)
+
+`LDAP_GROUP_SEARCH_BASE`
+
+Starting point within LDAP structure to search for user to acquire `admin`
+rights on etherpad.
+
+`LDAP_GROUP_NAME`
+
+Group name search for members to acquire `admin` rights on etherpad.
+
+## Add plugins
 
 In order to keep the images smaller, we do not install many plugins.
 If you need any plugin, you can inherit the base image that you like, and write
@@ -110,7 +161,7 @@ RUN npm --silent install \
 ```
 
 
-# Abiword enable
+## Abiword enable
 
 To use advanced import/export install abiword. For it, create a `Dockerfile`
 with:

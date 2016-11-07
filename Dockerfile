@@ -11,7 +11,8 @@ FROM node:4.4
 MAINTAINER Thiago Almeida <thiagoalmeidasa@gmail.com>
 
 ENV ETHERPAD_VERSION 1.6.0
-ENV PLUGINS ep_adminpads ep_markdown ep_webrtc
+ENV PLUGINS ep_adminpads ep_markdown ep_webrtc git+https://github.com/tykeal/ep_ldapauth.git
+
 
 # Get Etherpad-lite's other dependencies
 RUN set -x; \

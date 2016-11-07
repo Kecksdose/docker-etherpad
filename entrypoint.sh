@@ -19,7 +19,7 @@ DB_NAME=${DB_NAME:-}
 DB_USER=${DB_USER:-}
 DB_PASS=${DB_PASS:-}
 
-
+REQUIRE_AUTH=${REQUIRE_AUTH:-false}
 ADMIN_PASS=${ADMIN_PASS:-admin}
 FAVICON_URL=${FAVICON_URL:-favicon.ico}
 ABIWORD=${ABIWORD:-false}
@@ -105,6 +105,51 @@ case ${DB_TYPE} in
     ;;
 esac
 
+## LDAP settings:
+
+LDAP_ENABLED=${LDAP_ENABLED:-false}
+LDAP_SERVER=${LDAP_SERVER:-}
+LDAP_BIND_DN=${LDAP_BIND_DN:-}
+LDAP_BIND_PASSWORD=${LDAP_BIND_PASSWORD:-}
+LDAP_SEARCH_BASE=${LDAP_SEARCH_BASE:-}
+LDAP_SEARCH_PROPERTY=${LDAP_SEARCH_PROPERTY:-'uid'}
+LDAP_NAME_PROPERTY=${LDAP_FULL_NAME_PROPERTY:-'cn'}
+LDAP_GROUP_SEARCH_BASE=${LDAP_GROUP_SEARCH_BASE:-}
+LDAP_GROUP_NAME=${LDAP_GROUP_NAME:-}
+ANONYMOUS_READONLY=${ANONYMOUS_READONLY:-false}
+
+if [[ ${LDAP_ENABLED} == true  ]]; then
+
+    REQUIRE_AUTH=true
+    USERS_ARRAY='"users": {
+        "admin": {
+          "password": "'${ADMIN_PASS}'",
+          "is_admin": true
+        },
+        "ldapauth": {
+            "url": "'${LDAP_SERVER}'",
+            "accountBase": "'${LDAP_SEARCH_BASE}'",
+            "accountPattern": "(&(objectClass=*)('${LDAP_SEARCH_PROPERTY}'={{username}}))",
+            "displayNameAttribute": "'${LDAP_NAME_PROPERTY}'",
+            "searchDN": "'${LDAP_BIND_DN}'",
+            "searchPWD": "'${LDAP_BIND_PASSWORD}'",
+            "searchScope": "sub",
+            "groupSearchBase": "'${LDAP_GROUP_SEARCH_BASE}'",
+            "groupAttribute": "memberUid",
+            "groupAttributeIsDN": false,
+            "groupSearch": "(&(cn='${LDAP_GROUP_NAME}')(objectClass=posixGroup))",
+            "anonymousReadonly": '${ANONYMOUS_READONLY}'
+        }
+    },'
+
+else
+    USERS_ARRAY=' "users": {
+        "admin": {
+          "password": "'${ADMIN_PASS}'",
+          "is_admin": true
+        }
+      },'
+fi
 
 cat > ${SETTINGS_FILE} <<END_OF_TEMPLATE
 /*
@@ -173,7 +218,7 @@ cat > ${SETTINGS_FILE} <<END_OF_TEMPLATE
 
   /* This setting is used if you require authentication of all users.
      Note: /admin always requires authentication. */
-  "requireAuthentication": false,
+  "requireAuthentication": $REQUIRE_AUTH,
 
   /* Require authorization by a module, or a user with is_admin set, see below. */
   "requireAuthorization": false,
@@ -186,12 +231,7 @@ cat > ${SETTINGS_FILE} <<END_OF_TEMPLATE
 
   /* Users for basic authentication. is_admin = true gives access to /admin.
      If you do not uncomment this, /admin will not be available! */
-  "users": {
-    "admin": {
-      "password": "${ADMIN_PASS}",
-      "is_admin": true
-    }
-  },
+     $USERS_ARRAY
 
   // restrict socket.io transport methods
   "socketTransportProtocols" : ["xhr-polling", "jsonp-polling", "htmlfile"],
